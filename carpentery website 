@@ -1,0 +1,887 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Grained & Grain – Carpenter Tools & Services</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --oak:    #C8915A;
+      --walnut: #3B2314;
+      --cream:  #F5EFE6;
+      --sand:   #E8D8C3;
+      --dark:   #1A0F09;
+      --sage:   #7A8C6E;
+      --rust:   #B54A1F;
+      --light:  #FAF6F1;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--light);
+      color: var(--walnut);
+      overflow-x: hidden;
+    }
+
+    /* ─── CURSOR ─── */
+    body { cursor: none; }
+    #cursor {
+      width: 18px; height: 18px;
+      border: 2px solid var(--oak);
+      border-radius: 50%;
+      position: fixed; top: 0; left: 0;
+      pointer-events: none; z-index: 9999;
+      transform: translate(-50%,-50%);
+      transition: transform .15s ease, background .2s;
+    }
+    body:has(a:hover) #cursor,
+    body:has(button:hover) #cursor { transform: translate(-50%,-50%) scale(2); background: rgba(200,145,90,.15); }
+
+    /* ─── NAV ─── */
+    nav {
+      position: fixed; top: 0; width: 100%; z-index: 100;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 1.2rem 5%;
+      background: rgba(250,246,241,.92);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--sand);
+    }
+    .logo {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.5rem; font-weight: 900;
+      color: var(--walnut); text-decoration: none;
+      letter-spacing: -.5px;
+    }
+    .logo span { color: var(--oak); }
+    .nav-links { display: flex; gap: 2.4rem; list-style: none; }
+    .nav-links a {
+      font-size: .9rem; font-weight: 500; letter-spacing: .05em;
+      text-decoration: none; color: var(--walnut);
+      position: relative; padding-bottom: 2px;
+    }
+    .nav-links a::after {
+      content: ''; position: absolute; bottom: 0; left: 0;
+      width: 0; height: 1px; background: var(--oak);
+      transition: width .3s;
+    }
+    .nav-links a:hover::after { width: 100%; }
+    .nav-cta {
+      background: var(--walnut); color: var(--cream) !important;
+      padding: .55rem 1.4rem; border-radius: 2px;
+      font-size: .85rem !important; letter-spacing: .08em;
+      text-transform: uppercase;
+      transition: background .25s;
+    }
+    .nav-cta:hover { background: var(--rust) !important; }
+    .nav-cta::after { display: none !important; }
+
+    /* ─── HERO ─── */
+    #hero {
+      min-height: 100vh;
+      display: grid; grid-template-columns: 1fr 1fr;
+      padding-top: 80px;
+      overflow: hidden;
+    }
+    .hero-left {
+      display: flex; flex-direction: column; justify-content: center;
+      padding: 6% 5% 6% 8%;
+      position: relative;
+    }
+    .hero-tag {
+      font-size: .75rem; letter-spacing: .18em; text-transform: uppercase;
+      color: var(--oak); font-weight: 500; margin-bottom: 1.4rem;
+      display: flex; align-items: center; gap: .6rem;
+    }
+    .hero-tag::before { content: ''; display: block; width: 28px; height: 1px; background: var(--oak); }
+    h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(3rem, 5.5vw, 5.2rem);
+      line-height: 1.05; color: var(--dark);
+      margin-bottom: 1.8rem;
+    }
+    h1 em { color: var(--oak); font-style: italic; }
+    .hero-desc {
+      font-size: 1.05rem; line-height: 1.8;
+      color: #6B5040; max-width: 440px; margin-bottom: 3rem;
+    }
+    .hero-btns { display: flex; gap: 1rem; flex-wrap: wrap; }
+    .btn-primary {
+      background: var(--walnut); color: var(--cream);
+      padding: .9rem 2.2rem; border: none; border-radius: 2px;
+      font-family: 'DM Sans', sans-serif; font-size: .9rem;
+      font-weight: 500; letter-spacing: .06em; text-transform: uppercase;
+      text-decoration: none; cursor: none;
+      transition: background .25s, transform .2s;
+    }
+    .btn-primary:hover { background: var(--rust); transform: translateY(-2px); }
+    .btn-outline {
+      background: transparent; color: var(--walnut);
+      padding: .9rem 2.2rem; border: 1.5px solid var(--walnut); border-radius: 2px;
+      font-family: 'DM Sans', sans-serif; font-size: .9rem;
+      font-weight: 500; letter-spacing: .06em; text-transform: uppercase;
+      text-decoration: none; cursor: none;
+      transition: background .25s, color .25s;
+    }
+    .btn-outline:hover { background: var(--walnut); color: var(--cream); }
+
+    .hero-stats {
+      display: flex; gap: 2.5rem; margin-top: 3.5rem;
+      padding-top: 2rem; border-top: 1px solid var(--sand);
+    }
+    .stat-num {
+      font-family: 'Playfair Display', serif;
+      font-size: 2.2rem; font-weight: 900; color: var(--walnut);
+    }
+    .stat-label { font-size: .8rem; color: #8A6E5A; margin-top: .1rem; }
+
+    .hero-right {
+      background: var(--walnut);
+      position: relative; overflow: hidden;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .hero-right-inner {
+      width: 100%; height: 100%;
+      display: flex; align-items: center; justify-content: center;
+      position: relative;
+    }
+    /* Wood grain SVG background */
+    .wood-bg {
+      position: absolute; inset: 0;
+      opacity: .12;
+      background-image: repeating-linear-gradient(
+        2deg,
+        transparent, transparent 8px,
+        rgba(200,145,90,.5) 8px, rgba(200,145,90,.5) 9px
+      );
+    }
+    .hero-tool-display {
+      position: relative; z-index: 2;
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 1.2rem; padding: 2rem;
+    }
+    .tool-card {
+      background: rgba(255,255,255,.07);
+      border: 1px solid rgba(200,145,90,.25);
+      border-radius: 4px; padding: 1.6rem 1.4rem;
+      text-align: center;
+      animation: floatUp 6s ease-in-out infinite;
+    }
+    .tool-card:nth-child(2) { animation-delay: 1.5s; margin-top: 1.5rem; }
+    .tool-card:nth-child(3) { animation-delay: 3s; }
+    .tool-card:nth-child(4) { animation-delay: 4.5s; margin-top: 1.5rem; }
+    @keyframes floatUp {
+      0%,100% { transform: translateY(0); }
+      50%      { transform: translateY(-8px); }
+    }
+    .tool-icon { font-size: 2.6rem; margin-bottom: .6rem; }
+    .tool-name { font-size: .78rem; letter-spacing: .1em; text-transform: uppercase; color: var(--sand); font-weight: 500; }
+    .tool-price { font-family: 'Playfair Display', serif; font-size: 1.2rem; color: var(--oak); margin-top: .3rem; }
+
+    .hero-badge {
+      position: absolute; bottom: 2.5rem; right: 2.5rem; z-index: 3;
+      width: 90px; height: 90px; border-radius: 50%;
+      background: var(--oak); color: var(--dark);
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      font-size: .65rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase;
+      text-align: center; line-height: 1.3;
+      animation: spin 20s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* ─── SECTION WRAPPER ─── */
+    section { padding: 7rem 8%; }
+    .section-label {
+      font-size: .72rem; letter-spacing: .2em; text-transform: uppercase;
+      color: var(--oak); font-weight: 500;
+      display: flex; align-items: center; gap: .7rem; margin-bottom: 1.2rem;
+    }
+    .section-label::before { content: ''; display: block; width: 24px; height: 1px; background: var(--oak); }
+    h2 {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(2rem, 4vw, 3.2rem);
+      line-height: 1.15; color: var(--dark); margin-bottom: 1rem;
+    }
+    .section-desc { font-size: 1rem; color: #7A5E4E; line-height: 1.8; max-width: 520px; }
+
+    /* ─── PRODUCTS ─── */
+    #products { background: var(--light); }
+    .products-header { display: flex; align-items: flex-end; justify-content: space-between; margin-bottom: 3.5rem; flex-wrap: wrap; gap: 1.5rem; }
+    .filter-tabs { display: flex; gap: .6rem; flex-wrap: wrap; }
+    .tab {
+      padding: .5rem 1.2rem; border: 1px solid var(--sand);
+      background: transparent; border-radius: 2px;
+      font-family: 'DM Sans', sans-serif; font-size: .82rem;
+      color: var(--walnut); cursor: none;
+      transition: all .2s;
+    }
+    .tab.active, .tab:hover { background: var(--walnut); color: var(--cream); border-color: var(--walnut); }
+
+    .products-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 1.8rem;
+    }
+    .product-card {
+      background: #fff;
+      border: 1px solid var(--sand);
+      border-radius: 3px; overflow: hidden;
+      transition: transform .3s, box-shadow .3s;
+    }
+    .product-card:hover { transform: translateY(-6px); box-shadow: 0 20px 50px rgba(59,35,20,.12); }
+    .product-img {
+      height: 200px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 4rem; position: relative;
+      overflow: hidden;
+    }
+    .p-bg-1 { background: linear-gradient(135deg, #F5EFE6, #E8D8C3); }
+    .p-bg-2 { background: linear-gradient(135deg, #E8D8C3, #D4C0A8); }
+    .p-bg-3 { background: linear-gradient(135deg, #EDE8E1, #DDD4C4); }
+    .product-badge {
+      position: absolute; top: 1rem; left: 1rem;
+      background: var(--rust); color: #fff;
+      font-size: .65rem; font-weight: 700; letter-spacing: .1em; text-transform: uppercase;
+      padding: .25rem .6rem; border-radius: 2px;
+    }
+    .product-body { padding: 1.4rem; }
+    .product-cat { font-size: .7rem; letter-spacing: .12em; text-transform: uppercase; color: var(--oak); margin-bottom: .4rem; }
+    .product-name { font-family: 'Playfair Display', serif; font-size: 1.15rem; color: var(--dark); margin-bottom: .6rem; }
+    .product-desc { font-size: .85rem; color: #8A6E5A; line-height: 1.6; margin-bottom: 1.2rem; }
+    .product-footer { display: flex; align-items: center; justify-content: space-between; }
+    .product-price { font-family: 'Playfair Display', serif; font-size: 1.4rem; color: var(--walnut); }
+    .add-btn {
+      width: 38px; height: 38px; border-radius: 50%;
+      background: var(--walnut); border: none; color: var(--cream);
+      font-size: 1.2rem; cursor: none; display: flex; align-items: center; justify-content: center;
+      transition: background .2s, transform .2s;
+    }
+    .add-btn:hover { background: var(--oak); transform: scale(1.1); }
+
+    /* ─── SERVICES ─── */
+    #services { background: var(--walnut); color: var(--cream); }
+    #services h2 { color: var(--cream); }
+    #services .section-desc { color: var(--sand); }
+    .services-grid {
+      display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 1.5rem; margin-top: 3.5rem;
+    }
+    .service-card {
+      border: 1px solid rgba(200,145,90,.3);
+      border-radius: 3px; padding: 2.2rem;
+      position: relative; overflow: hidden;
+      transition: background .3s, border-color .3s;
+    }
+    .service-card::before {
+      content: ''; position: absolute; top: 0; left: 0;
+      width: 3px; height: 0; background: var(--oak);
+      transition: height .4s ease;
+    }
+    .service-card:hover::before { height: 100%; }
+    .service-card:hover { background: rgba(200,145,90,.08); border-color: var(--oak); }
+    .service-icon { font-size: 2.4rem; margin-bottom: 1.2rem; }
+    .service-name {
+      font-family: 'Playfair Display', serif; font-size: 1.25rem;
+      color: var(--cream); margin-bottom: .8rem;
+    }
+    .service-desc { font-size: .9rem; color: var(--sand); line-height: 1.7; margin-bottom: 1.5rem; }
+    .service-price { font-size: .8rem; letter-spacing: .1em; text-transform: uppercase; color: var(--oak); }
+    .service-link {
+      display: inline-flex; align-items: center; gap: .5rem;
+      color: var(--oak); font-size: .85rem; text-decoration: none; font-weight: 500;
+      margin-top: 1.2rem;
+      transition: gap .2s;
+    }
+    .service-link:hover { gap: .9rem; }
+
+    /* ─── WHY US / STRIPS ─── */
+    #why { background: var(--cream); }
+    .why-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 5rem; align-items: center; }
+    .why-visual {
+      position: relative; height: 460px;
+    }
+    .why-block {
+      position: absolute; border-radius: 3px; overflow: hidden;
+      box-shadow: 0 12px 40px rgba(59,35,20,.18);
+    }
+    .wb-large { width: 68%; height: 75%; top: 0; left: 0; background: var(--walnut); display: flex; align-items: center; justify-content: center; font-size: 6rem; }
+    .wb-small { width: 42%; height: 48%; bottom: 0; right: 0; background: var(--oak); display: flex; align-items: center; justify-content: center; font-size: 4rem; }
+    .why-years {
+      position: absolute; top: 48%; left: 52%;
+      background: var(--rust); color: #fff;
+      padding: 1.2rem 1.6rem; border-radius: 3px;
+      font-family: 'Playfair Display', serif;
+      text-align: center;
+    }
+    .why-years strong { font-size: 2.5rem; display: block; line-height: 1; }
+    .why-years span { font-size: .75rem; letter-spacing: .1em; text-transform: uppercase; }
+    .feature-list { list-style: none; margin-top: 2rem; display: flex; flex-direction: column; gap: 1.2rem; }
+    .feature-list li {
+      display: flex; align-items: flex-start; gap: 1rem;
+      font-size: .95rem; line-height: 1.6; color: #5A3E30;
+    }
+    .feature-icon { font-size: 1.3rem; flex-shrink: 0; margin-top: .1rem; }
+
+    /* ─── TESTIMONIALS ─── */
+    #testimonials { background: var(--light); }
+    .testi-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 1.5rem; margin-top: 3rem; }
+    .testi-card {
+      background: #fff; border: 1px solid var(--sand); border-radius: 3px; padding: 2rem;
+    }
+    .stars { color: var(--oak); font-size: 1rem; margin-bottom: 1rem; letter-spacing: 2px; }
+    .testi-text { font-size: .95rem; line-height: 1.8; color: #5A3E30; font-style: italic; margin-bottom: 1.5rem; }
+    .testi-author { display: flex; align-items: center; gap: .8rem; }
+    .avatar { width: 42px; height: 42px; border-radius: 50%; background: var(--sand); display: flex; align-items: center; justify-content: center; font-size: 1.2rem; }
+    .author-name { font-weight: 600; font-size: .9rem; color: var(--dark); }
+    .author-role { font-size: .78rem; color: #8A6E5A; }
+
+    /* ─── CTA STRIP ─── */
+    #cta-strip {
+      background: var(--oak);
+      padding: 5rem 8%;
+      display: flex; align-items: center; justify-content: space-between; gap: 2rem; flex-wrap: wrap;
+    }
+    #cta-strip h2 { color: var(--dark); font-size: clamp(1.8rem, 3vw, 2.6rem); max-width: 500px; }
+    #cta-strip p { color: var(--walnut); font-size: .95rem; margin-top: .6rem; max-width: 420px; line-height: 1.6; }
+    .cta-group { display: flex; gap: 1rem; flex-wrap: wrap; }
+    .btn-dark { background: var(--dark); color: var(--cream); padding: .9rem 2rem; border-radius: 2px; text-decoration: none; font-size: .9rem; font-weight: 500; letter-spacing: .06em; text-transform: uppercase; transition: background .2s; cursor: none; }
+    .btn-dark:hover { background: var(--walnut); }
+    .btn-white { background: #fff; color: var(--dark); padding: .9rem 2rem; border-radius: 2px; text-decoration: none; font-size: .9rem; font-weight: 500; letter-spacing: .06em; text-transform: uppercase; transition: opacity .2s; cursor: none; }
+    .btn-white:hover { opacity: .85; }
+
+    /* ─── CONTACT ─── */
+    #contact { background: var(--light); }
+    .contact-grid { display: grid; grid-template-columns: 1fr 1.4fr; gap: 5rem; align-items: start; margin-top: 3rem; }
+    .contact-info { display: flex; flex-direction: column; gap: 2rem; }
+    .info-item { display: flex; gap: 1rem; align-items: flex-start; }
+    .info-icon { width: 44px; height: 44px; border-radius: 2px; background: var(--sand); display: flex; align-items: center; justify-content: center; font-size: 1.2rem; flex-shrink: 0; }
+    .info-label { font-size: .7rem; letter-spacing: .12em; text-transform: uppercase; color: var(--oak); font-weight: 500; margin-bottom: .2rem; }
+    .info-val { font-size: .95rem; color: var(--walnut); line-height: 1.5; }
+    form { display: flex; flex-direction: column; gap: 1.2rem; }
+    label { font-size: .8rem; letter-spacing: .1em; text-transform: uppercase; color: var(--walnut); font-weight: 500; display: block; margin-bottom: .4rem; }
+    input, textarea, select {
+      width: 100%; background: #fff; border: 1px solid var(--sand);
+      padding: .8rem 1rem; border-radius: 2px; font-family: 'DM Sans', sans-serif;
+      font-size: .95rem; color: var(--dark);
+      transition: border-color .2s;
+      outline: none;
+    }
+    input:focus, textarea:focus, select:focus { border-color: var(--oak); }
+    textarea { resize: vertical; min-height: 120px; }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+    .submit-btn {
+      background: var(--walnut); color: var(--cream);
+      padding: 1rem 2.5rem; border: none; border-radius: 2px;
+      font-family: 'DM Sans', sans-serif; font-size: .9rem;
+      font-weight: 500; letter-spacing: .08em; text-transform: uppercase;
+      cursor: none; align-self: flex-start;
+      transition: background .25s, transform .2s;
+    }
+    .submit-btn:hover { background: var(--rust); transform: translateY(-2px); }
+
+    /* ─── FOOTER ─── */
+    footer {
+      background: var(--dark); color: var(--sand);
+      padding: 4rem 8% 2rem;
+    }
+    .footer-top { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 3rem; margin-bottom: 3rem; }
+    .footer-brand .logo { font-size: 1.3rem; color: var(--cream); }
+    .footer-brand p { font-size: .88rem; color: #8A7060; margin-top: 1rem; line-height: 1.7; max-width: 260px; }
+    .footer-col h4 { font-size: .75rem; letter-spacing: .15em; text-transform: uppercase; color: var(--oak); margin-bottom: 1.2rem; }
+    .footer-col ul { list-style: none; display: flex; flex-direction: column; gap: .7rem; }
+    .footer-col ul a { font-size: .88rem; color: #8A7060; text-decoration: none; transition: color .2s; }
+    .footer-col ul a:hover { color: var(--oak); }
+    .footer-bottom { border-top: 1px solid #2A1A10; padding-top: 1.5rem; display: flex; align-items: center; justify-content: space-between; font-size: .8rem; color: #6A5040; }
+    .socials { display: flex; gap: .8rem; }
+    .social-icon { width: 36px; height: 36px; border: 1px solid #3A2A1A; border-radius: 2px; display: flex; align-items: center; justify-content: center; font-size: .9rem; text-decoration: none; color: #8A7060; transition: border-color .2s, color .2s; }
+    .social-icon:hover { border-color: var(--oak); color: var(--oak); }
+
+    /* ─── MARQUEE ─── */
+    .marquee-strip {
+      background: var(--oak); padding: 1rem 0; overflow: hidden;
+      white-space: nowrap;
+    }
+    .marquee-inner { display: inline-block; animation: marquee 22s linear infinite; }
+    .marquee-inner span { font-size: .78rem; letter-spacing: .15em; text-transform: uppercase; font-weight: 600; color: var(--dark); padding: 0 2.5rem; }
+    .marquee-inner span::before { content: '✦'; margin-right: 2.5rem; }
+    @keyframes marquee { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+
+    /* ─── SCROLL ANIMATION ─── */
+    .reveal { opacity: 0; transform: translateY(30px); transition: opacity .7s ease, transform .7s ease; }
+    .reveal.visible { opacity: 1; transform: translateY(0); }
+
+    /* ─── RESPONSIVE ─── */
+    @media (max-width: 900px) {
+      #hero { grid-template-columns: 1fr; }
+      .hero-right { display: none; }
+      .why-grid { grid-template-columns: 1fr; }
+      .contact-grid { grid-template-columns: 1fr; gap: 2.5rem; }
+      .footer-top { grid-template-columns: 1fr 1fr; }
+      .form-row { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 600px) {
+      section { padding: 5rem 5%; }
+      .footer-top { grid-template-columns: 1fr; }
+      nav { padding: 1rem 5%; }
+      .nav-links { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+<div id="cursor"></div>
+
+<!-- NAV -->
+<nav>
+  <a href="#" class="logo">Grained<span>&</span>Grain</a>
+  <ul class="nav-links">
+    <li><a href="#products">Shop Tools</a></li>
+    <li><a href="#services">Services</a></li>
+    <li><a href="#why">About</a></li>
+    <li><a href="#contact" class="nav-cta">Get a Quote</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<section id="hero">
+  <div class="hero-left reveal">
+    <div class="hero-tag">Crafted for craftsmen</div>
+    <h1>Tools Built for the <em>Grain.</em></h1>
+    <p class="hero-desc">Premium carpenter tools, hand-selected for professionals and serious makers. Plus expert carpentry services — from custom furniture to full renovations.</p>
+    <div class="hero-btns">
+      <a href="#products" class="btn-primary">Shop Tools</a>
+      <a href="#services" class="btn-outline">Our Services</a>
+    </div>
+    <div class="hero-stats">
+      <div>
+        <div class="stat-num">400+</div>
+        <div class="stat-label">Tools in stock</div>
+      </div>
+      <div>
+        <div class="stat-num">18yr</div>
+        <div class="stat-label">Experience</div>
+      </div>
+      <div>
+        <div class="stat-num">2.1k</div>
+        <div class="stat-label">Happy clients</div>
+      </div>
+    </div>
+  </div>
+  <div class="hero-right">
+    <div class="hero-right-inner">
+      <div class="wood-bg"></div>
+      <div class="hero-tool-display">
+        <div class="tool-card">
+          <div class="tool-icon">🪚</div>
+          <div class="tool-name">Hand Saw</div>
+          <div class="tool-price">$49</div>
+        </div>
+        <div class="tool-card">
+          <div class="tool-icon">🔨</div>
+          <div class="tool-name">Mallet</div>
+          <div class="tool-price">$34</div>
+        </div>
+        <div class="tool-card">
+          <div class="tool-icon">🔩</div>
+          <div class="tool-name">Drill Set</div>
+          <div class="tool-price">$120</div>
+        </div>
+        <div class="tool-card">
+          <div class="tool-icon">📐</div>
+          <div class="tool-name">Square Rule</div>
+          <div class="tool-price">$22</div>
+        </div>
+      </div>
+      <div class="hero-badge">Free Ship Orders $75+</div>
+    </div>
+  </div>
+</section>
+
+<!-- MARQUEE -->
+<div class="marquee-strip">
+  <div class="marquee-inner">
+    <span>Hand Tools</span><span>Power Tools</span><span>Custom Furniture</span><span>Joinery</span><span>Cabinet Fitting</span><span>Renovations</span><span>Free Shipping</span><span>Hand Tools</span><span>Power Tools</span><span>Custom Furniture</span><span>Joinery</span><span>Cabinet Fitting</span><span>Renovations</span><span>Free Shipping</span>
+  </div>
+</div>
+
+<!-- PRODUCTS -->
+<section id="products">
+  <div class="products-header reveal">
+    <div>
+      <div class="section-label">Our inventory</div>
+      <h2>Shop Premium Tools</h2>
+    </div>
+    <div class="filter-tabs">
+      <button class="tab active">All</button>
+      <button class="tab">Hand Tools</button>
+      <button class="tab">Power Tools</button>
+      <button class="tab">Measuring</button>
+      <button class="tab">Finishing</button>
+    </div>
+  </div>
+  <div class="products-grid">
+
+    <div class="product-card reveal">
+      <div class="product-img p-bg-1">🪚<span class="product-badge">Best Seller</span></div>
+      <div class="product-body">
+        <div class="product-cat">Hand Tools</div>
+        <div class="product-name">Japanese Pull Saw</div>
+        <div class="product-desc">Ultra-thin blade for clean, precise cuts in hardwood. 240mm, impulse-hardened teeth.</div>
+        <div class="product-footer">
+          <div class="product-price">$68</div>
+          <button class="add-btn">+</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="product-card reveal">
+      <div class="product-img p-bg-2">🔨</div>
+      <div class="product-body">
+        <div class="product-cat">Hand Tools</div>
+        <div class="product-name">Oak-Handle Mallet</div>
+        <div class="product-desc">Solid turned-oak handle, weighted head for driving chisels without bounce.</div>
+        <div class="product-footer">
+          <div class="product-price">$42</div>
+          <button class="add-btn">+</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="product-card reveal">
+      <div class="product-img p-bg-3">⚙️<span class="product-badge">New</span></div>
+      <div class="product-body">
+        <div class="product-cat">Power Tools</div>
+        <div class="product-name">Pro Drill & Driver Kit</div>
+        <div class="product-desc">18V brushless motor, 2-speed gearbox, 30 accessories. All-day battery life.</div>
+        <div class="product-footer">
+          <div class="product-price">$149</div>
+          <button class="add-btn">+</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="product-card reveal">
+      <div class="product-img p-bg-1">📐</div>
+      <div class="product-body">
+        <div class="product-cat">Measuring</div>
+        <div class="product-name">Combination Square</div>
+        <div class="product-desc">Hardened steel blade, cast-iron head. Marks and checks 45° & 90° with precision.</div>
+        <div class="product-footer">
+          <div class="product-price">$35</div>
+          <button class="add-btn">+</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="product-card reveal">
+      <div class="product-img p-bg-2">🪛</div>
+      <div class="product-body">
+        <div class="product-cat">Hand Tools</div>
+        <div class="product-name">Bench Chisel Set (6pc)</div>
+        <div class="product-desc">A2 tool steel, precision-ground bevels. Sizes 6–32mm. Beech handles.</div>
+        <div class="product-footer">
+          <div class="product-price">$95</div>
+          <button class="add-btn">+</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="product-card reveal">
+      <div class="product-img p-bg-3">🪓</div>
+      <div class="product-body">
+        <div class="product-cat">Hand Tools</div>
+        <div class="product-name">Splitting Hatchet</div>
+        <div class="product-desc">Drop-forged head, hickory handle with leather grip. Ideal for joinery prep work.</div>
+        <div class="product-footer">
+          <div class="product-price">$78</div>
+          <button class="add-btn">+</button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- SERVICES -->
+<section id="services">
+  <div class="reveal">
+    <div class="section-label">What we do</div>
+    <h2>Carpentry Services,<br>Done Right.</h2>
+    <p class="section-desc">From a single shelf to a complete home renovation — our craftsmen bring decades of expertise to every project.</p>
+  </div>
+  <div class="services-grid">
+
+    <div class="service-card reveal">
+      <div class="service-icon">🪑</div>
+      <div class="service-name">Custom Furniture</div>
+      <div class="service-desc">Bespoke tables, chairs, shelving, and cabinets designed to your exact specifications and space.</div>
+      <div class="service-price">From $400 / piece</div>
+      <a href="#contact" class="service-link">Book a consult →</a>
+    </div>
+
+    <div class="service-card reveal">
+      <div class="service-icon">🚪</div>
+      <div class="service-name">Door & Window Fitting</div>
+      <div class="service-desc">Precision fitting of doors, frames, and windows. Interior and exterior. New builds & retrofits.</div>
+      <div class="service-price">From $150 / unit</div>
+      <a href="#contact" class="service-link">Book a consult →</a>
+    </div>
+
+    <div class="service-card reveal">
+      <div class="service-icon">🏠</div>
+      <div class="service-name">Home Renovation</div>
+      <div class="service-desc">Full carpentry scope on renovations — framing, flooring, cladding, trims, and structural joinery.</div>
+      <div class="service-price">Request a quote</div>
+      <a href="#contact" class="service-link">Get a quote →</a>
+    </div>
+
+    <div class="service-card reveal">
+      <div class="service-icon">🪵</div>
+      <div class="service-name">Decking & Outdoor</div>
+      <div class="service-desc">Weather-resistant decks, pergolas, fences, and garden structures built to last.</div>
+      <div class="service-price">From $600 / project</div>
+      <a href="#contact" class="service-link">Book a consult →</a>
+    </div>
+
+    <div class="service-card reveal">
+      <div class="service-icon">🔧</div>
+      <div class="service-name">Repairs & Restoration</div>
+      <div class="service-desc">Fixing squeaky floors, broken frames, damaged joinery, antique restoration, and more.</div>
+      <div class="service-price">From $80 / visit</div>
+      <a href="#contact" class="service-link">Book a consult →</a>
+    </div>
+
+    <div class="service-card reveal">
+      <div class="service-icon">🗄️</div>
+      <div class="service-name">Built-in Storage</div>
+      <div class="service-desc">Custom wardrobes, alcove shelves, under-stair storage, and kitchen cabinet installations.</div>
+      <div class="service-price">From $300 / unit</div>
+      <a href="#contact" class="service-link">Book a consult →</a>
+    </div>
+
+  </div>
+</section>
+
+<!-- WHY US -->
+<section id="why">
+  <div class="why-grid">
+    <div class="why-visual reveal">
+      <div class="why-block wb-large">🪚</div>
+      <div class="why-block wb-small">🌲</div>
+      <div class="why-years">
+        <strong>18</strong>
+        <span>Years of craft</span>
+      </div>
+    </div>
+    <div class="reveal">
+      <div class="section-label">Why choose us</div>
+      <h2>Passion in Every<br>Cut & Joint</h2>
+      <p class="section-desc">We're not just a tool shop. We're a team of working carpenters who use what we sell. Every tool is hand-tested. Every service is done with pride.</p>
+      <ul class="feature-list">
+        <li><span class="feature-icon">✔️</span> All tools tested by our in-house craftsmen before they hit the shelf.</li>
+        <li><span class="feature-icon">🚚</span> Free shipping on all orders over $75 — fast, tracked, and insured.</li>
+        <li><span class="feature-icon">🔁</span> 30-day returns, no questions asked. Quality guaranteed.</li>
+        <li><span class="feature-icon">🛠️</span> Service projects fully insured. Every job backed by a 2-year workmanship warranty.</li>
+        <li><span class="feature-icon">💬</span> Free in-home consultations for all service enquiries over $500.</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- TESTIMONIALS -->
+<section id="testimonials">
+  <div class="reveal">
+    <div class="section-label">Client stories</div>
+    <h2>What Our Customers Say</h2>
+  </div>
+  <div class="testi-grid">
+    <div class="testi-card reveal">
+      <div class="stars">★★★★★</div>
+      <p class="testi-text">"I've tried many suppliers, but Grained & Grain is on another level. The Japanese saw I ordered cuts like butter. Fast delivery too."</p>
+      <div class="testi-author">
+        <div class="avatar">👷</div>
+        <div><div class="author-name">Marcus T.</div><div class="author-role">Furniture Maker, Portland</div></div>
+      </div>
+    </div>
+    <div class="testi-card reveal">
+      <div class="stars">★★★★★</div>
+      <p class="testi-text">"Hired them to build a custom oak dining table. The craftsmanship is stunning. Exactly what I envisioned. Worth every penny."</p>
+      <div class="testi-author">
+        <div class="avatar">🏡</div>
+        <div><div class="author-name">Priya K.</div><div class="author-role">Homeowner, Seattle</div></div>
+      </div>
+    </div>
+    <div class="testi-card reveal">
+      <div class="stars">★★★★★</div>
+      <p class="testi-text">"They fitted our new doors and built the wardrobe. Clean, professional, done ahead of schedule. My go-to for all carpentry."</p>
+      <div class="testi-author">
+        <div class="avatar">🏢</div>
+        <div><div class="author-name">Lena W.</div><div class="author-role">Interior Designer, Austin</div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA STRIP -->
+<div id="cta-strip">
+  <div class="reveal">
+    <h2>Ready to Build Something Great?</h2>
+    <p>Browse our tools or book a free consultation with one of our craftsmen today.</p>
+  </div>
+  <div class="cta-group reveal">
+    <a href="#products" class="btn-dark">Shop Tools</a>
+    <a href="#contact" class="btn-white">Book a Service</a>
+  </div>
+</div>
+
+<!-- CONTACT -->
+<section id="contact">
+  <div class="reveal">
+    <div class="section-label">Talk to us</div>
+    <h2>Get in Touch</h2>
+    <p class="section-desc">Need advice on which tool to buy, or want to discuss a project? We'd love to hear from you.</p>
+  </div>
+  <div class="contact-grid">
+    <div class="contact-info reveal">
+      <div class="info-item">
+        <div class="info-icon">📍</div>
+        <div>
+          <div class="info-label">Workshop & Showroom</div>
+          <div class="info-val">142 Timber Lane, Craftwood<br>Oregon, OR 97201</div>
+        </div>
+      </div>
+      <div class="info-item">
+        <div class="info-icon">📞</div>
+        <div>
+          <div class="info-label">Call Us</div>
+          <div class="info-val">(503) 842-7210<br>Mon–Sat, 8am–6pm</div>
+        </div>
+      </div>
+      <div class="info-item">
+        <div class="info-icon">✉️</div>
+        <div>
+          <div class="info-label">Email</div>
+          <div class="info-val">hello@grainedandgrain.com</div>
+        </div>
+      </div>
+      <div class="info-item">
+        <div class="info-icon">🚗</div>
+        <div>
+          <div class="info-label">Site Visits</div>
+          <div class="info-val">Free consultation for service quotes over $500. We come to you.</div>
+        </div>
+      </div>
+    </div>
+    <form class="reveal" onsubmit="handleSubmit(event)">
+      <div class="form-row">
+        <div><label for="name">Full Name</label><input type="text" id="name" placeholder="John Smith"/></div>
+        <div><label for="email">Email</label><input type="email" id="email" placeholder="john@email.com"/></div>
+      </div>
+      <div>
+        <label for="interest">I'm interested in</label>
+        <select id="interest">
+          <option>Buying tools</option>
+          <option>Custom furniture</option>
+          <option>Home renovation</option>
+          <option>Repairs & restoration</option>
+          <option>Other carpentry service</option>
+        </select>
+      </div>
+      <div><label for="message">Message</label><textarea id="message" placeholder="Tell us about your project or what you're looking for..."></textarea></div>
+      <button type="submit" class="submit-btn">Send Message →</button>
+    </form>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-top">
+    <div class="footer-brand">
+      <a href="#" class="logo">Grained<span style="color:var(--oak)">&</span>Grain</a>
+      <p>Premium carpenter tools and expert carpentry services. Built by craftsmen, for craftsmen.</p>
+    </div>
+    <div class="footer-col">
+      <h4>Shop</h4>
+      <ul>
+        <li><a href="#">Hand Tools</a></li>
+        <li><a href="#">Power Tools</a></li>
+        <li><a href="#">Measuring</a></li>
+        <li><a href="#">Finishing</a></li>
+        <li><a href="#">New Arrivals</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>Services</h4>
+      <ul>
+        <li><a href="#">Custom Furniture</a></li>
+        <li><a href="#">Doors & Windows</a></li>
+        <li><a href="#">Renovation</a></li>
+        <li><a href="#">Decking</a></li>
+        <li><a href="#">Repairs</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>Company</h4>
+      <ul>
+        <li><a href="#">About Us</a></li>
+        <li><a href="#">Blog</a></li>
+        <li><a href="#">Careers</a></li>
+        <li><a href="#">Returns Policy</a></li>
+        <li><a href="#">Contact</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <span>© 2026 Grained & Grain. All rights reserved.</span>
+    <div class="socials">
+      <a class="social-icon" href="#">𝕏</a>
+      <a class="social-icon" href="#">in</a>
+      <a class="social-icon" href="#">f</a>
+      <a class="social-icon" href="#">📸</a>
+    </div>
+  </div>
+</footer>
+
+<script>
+  // Custom cursor
+  const cursor = document.getElementById('cursor');
+  document.addEventListener('mousemove', e => {
+    cursor.style.left = e.clientX + 'px';
+    cursor.style.top = e.clientY + 'px';
+  });
+
+  // Scroll reveal
+  const reveals = document.querySelectorAll('.reveal');
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach((entry, i) => {
+      if (entry.isIntersecting) {
+        setTimeout(() => entry.target.classList.add('visible'), i * 80);
+        observer.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.1 });
+  reveals.forEach(el => observer.observe(el));
+
+  // Filter tabs
+  document.querySelectorAll('.tab').forEach(tab => {
+    tab.addEventListener('click', function() {
+      document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+      this.classList.add('active');
+    });
+  });
+
+  // Form submit
+  function handleSubmit(e) {
+    e.preventDefault();
+    const btn = e.target.querySelector('.submit-btn');
+    btn.textContent = 'Message Sent ✓';
+    btn.style.background = 'var(--sage)';
+    setTimeout(() => { btn.textContent = 'Send Message →'; btn.style.background = ''; }, 3000);
+  }
+</script>
+</body>
+</html>
